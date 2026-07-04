@@ -1,4 +1,4 @@
-{:itonami.blueprint/id "cloud-itonami-8510"
+{:itonami.blueprint/id "cloud-itonami-isic-8510"
  :itonami.blueprint/name "Pre-primary and primary education"
  :itonami.blueprint/isic-rev5 "8510"
  :itonami.blueprint/domain :education/pre-primary-primary

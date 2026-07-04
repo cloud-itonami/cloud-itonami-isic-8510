@@ -1,6 +1,6 @@
 # Governance
 
-`cloud-itonami-8510` is an OSS open-business blueprint for pre-primary and primary education -- early-childhood and primary-school instruction for children by licensed educators.
+`cloud-itonami-isic-8510` is an OSS open-business blueprint for pre-primary and primary education -- early-childhood and primary-school instruction for children by licensed educators.
 Governance covers both the capability layer and the operator model.
 
 ## Maintainers

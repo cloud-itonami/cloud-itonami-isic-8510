@@ -1,4 +1,4 @@
-# cloud-itonami-8510
+# cloud-itonami-isic-8510
 
 Open Business Blueprint for **ISIC Rev.5 8510**: Pre-primary and primary education.
 

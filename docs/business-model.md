@@ -2,7 +2,7 @@
 
 ## Classification
 
-- Repository: `cloud-itonami-8510`
+- Repository: `cloud-itonami-isic-8510`
 - ISIC Rev.5: `8510`
 - Activity: pre-primary and primary education -- early-childhood and primary-school instruction for children by licensed educators
 - Social impact: education access, data sovereignty, transparent audit
