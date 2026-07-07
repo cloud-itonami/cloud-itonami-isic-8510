@@ -31,7 +31,14 @@
 ## Trust Controls
 
 - no promotion decision or safeguarding-relevant record is finalized without human sign-off (a licensed educator)
-- a fabricated assessment forces a hold, not an override
-- every record path is auditable
+- a fabricated jurisdiction citation, incomplete evidence, a
+  destination class size exceeding its own recorded maximum, or an
+  uncleared staff background check -- each forces a hold, not an
+  override
+- a student's promotion or safeguarding record cannot be finalized
+  twice: a double-finalization attempt is held off this actor's own
+  student facts alone, with no upstream comparison needed
+- every intake, assessment, screening, promotion and safeguarding-
+  record path is auditable
 - student data (particularly for minors) stays outside Git
 - emergency manual override paths remain outside LLM control

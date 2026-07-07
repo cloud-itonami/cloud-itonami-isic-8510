@@ -1,0 +1,84 @@
+(ns school.sim
+  "Demo driver -- `clojure -M:dev:run`. Walks a clean student through
+  intake -> jurisdiction assessment -> background-check screening ->
+  promotion-finalization proposal (always escalates) -> human approval
+  -> commit, then through safeguarding-record-finalization proposal
+  (always escalates) -> human approval -> commit, then shows five HARD
+  holds (a jurisdiction with no spec-basis, a destination class size
+  over its own maximum, an uncleared staff background check screened
+  directly via `:background-check/screen` [never via an actuation op
+  against an unscreened student -- see this actor's own governor ns
+  docstring / the lesson `parksafety`'s ADR-2607071922 Decision 5,
+  `eldercare`'s, `museum`'s, `conservation`'s, `salon`'s,
+  `entertainment`'s, `casework`'s, `hospital`'s and `facility`'s
+  ADR-0001s already recorded], and a double promotion/safeguarding-
+  record finalization of an already-processed student) that never
+  reach a human at all, and prints the audit ledger + the draft
+  promotion-finalization and safeguarding-record-finalization
+  records."
+  (:require [langgraph.graph :as g]
+            [school.store :as store]
+            [school.operation :as op]))
+
+(def operator {:actor-id "op-1" :actor-role :licensed-educator :phase 3})
+
+(defn- exec! [actor tid request context]
+  (g/run* actor {:request request :context context} {:thread-id tid}))
+
+(defn- approve! [actor tid]
+  (g/run* actor {:approval {:status :approved :by "op-1"}} {:thread-id tid :resume? true}))
+
+(defn -main [& _]
+  (let [db (store/seed-db)
+        actor (op/build db)]
+    (println "== student/intake student-1 (JPN, clean; 25/30 class size, background check cleared) ==")
+    (println (exec! actor "t1" {:op :student/intake :subject "student-1"
+                                :patch {:id "student-1" :student-name "Sakura Tanaka"}} operator))
+
+    (println "== jurisdiction/assess student-1 (escalates -- human approves) ==")
+    (println (exec! actor "t2" {:op :jurisdiction/assess :subject "student-1"} operator))
+    (println (approve! actor "t2"))
+
+    (println "== background-check/screen student-1 (clean; escalates -- human approves) ==")
+    (println (exec! actor "t3" {:op :background-check/screen :subject "student-1"} operator))
+    (println (approve! actor "t3"))
+
+    (println "== promotion/finalize student-1 (always escalates -- actuation/finalize-promotion) ==")
+    (let [r (exec! actor "t4" {:op :promotion/finalize :subject "student-1"} operator)]
+      (println r)
+      (println "-- human educator approves --")
+      (println (approve! actor "t4")))
+
+    (println "== safeguarding/finalize student-1 (always escalates -- actuation/finalize-safeguarding-record) ==")
+    (let [r (exec! actor "t5" {:op :safeguarding/finalize :subject "student-1"} operator)]
+      (println r)
+      (println "-- human educator approves --")
+      (println (approve! actor "t5")))
+
+    (println "== jurisdiction/assess student-2 (no spec-basis -> HARD hold) ==")
+    (println (exec! actor "t6" {:op :jurisdiction/assess :subject "student-2" :no-spec? true} operator))
+
+    (println "== jurisdiction/assess student-3 (escalates -- human approves; sets up the class-size test) ==")
+    (println (exec! actor "t7" {:op :jurisdiction/assess :subject "student-3"} operator))
+    (println (approve! actor "t7"))
+
+    (println "== promotion/finalize student-3 (32/30 destination class size -> HARD hold) ==")
+    (println (exec! actor "t8" {:op :promotion/finalize :subject "student-3"} operator))
+
+    (println "== background-check/screen student-4 (not-cleared -> HARD hold, never reaches a human) ==")
+    (println (exec! actor "t9" {:op :background-check/screen :subject "student-4"} operator))
+
+    (println "== promotion/finalize student-1 AGAIN (double-promotion -> HARD hold) ==")
+    (println (exec! actor "t10" {:op :promotion/finalize :subject "student-1"} operator))
+
+    (println "== safeguarding/finalize student-1 AGAIN (double-record -> HARD hold) ==")
+    (println (exec! actor "t11" {:op :safeguarding/finalize :subject "student-1"} operator))
+
+    (println "== audit ledger ==")
+    (doseq [f (store/ledger db)] (println f))
+
+    (println "== draft promotion-finalization records ==")
+    (doseq [r (store/promotion-history db)] (println r))
+
+    (println "== draft safeguarding-record-finalization records ==")
+    (doseq [r (store/safeguarding-history db)] (println r))))
