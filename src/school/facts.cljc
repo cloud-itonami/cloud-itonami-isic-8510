@@ -27,7 +27,23 @@
   Education, Children's Services and Skills) jointly, since school
   registration (DfE) and safeguarding/quality inspection (Ofsted) are
   two distinct statutory functions -- both cited rather than
-  collapsed into one.")
+  collapsed into one.
+
+  The CAN entry cites Ontario's Education Act, R.S.O. 1990, c. E.2 as
+  a REPRESENTATIVE PROVINCE-LEVEL source, not a 'Canada' federal
+  claim: K-12 education in Canada is constitutionally a provincial/
+  territorial matter (unlike USA's ESSA, which is a federal statute
+  even though enforcement is state-by-state), so there is no federal
+  Ministry of Education or national school-operator licensor to cite.
+  Ontario was chosen as the representative province and its Education
+  Act was fetched and read directly this session (live e-laws page
+  plus a 2026-06-26 Wayback Machine capture used as a readable mirror
+  because the live ontario.ca/laws SPA shell requires client-side
+  JavaScript to render statute text -- not a bot-detection block, but
+  curl cannot render it either way, so the archived capture was used
+  as the actually-read source). Other provinces (Quebec's Loi sur
+  l'instruction publique, British Columbia's School Act, etc.) are
+  NOT covered by this entry and must not be assumed equivalent.")
 
 (def catalog
   "iso3 -> requirement map. `:required-evidence` mirrors the generic
@@ -71,7 +87,15 @@
           :required-evidence ["Schulanmeldung (student-registration record)"
                               "Lehrplangenehmigung (curriculum-approval certificate)"
                               "Kinderschutzkonzept (safeguarding-policy document)"
-                              "Führungszeugnis des Personals (staff-background-check certification)"]}})
+                              "Führungszeugnis des Personals (staff-background-check certification)"]}
+   "CAN" {:name "Canada (Ontario) -- province-level entry, NOT a federal claim (education is constitutionally provincial/territorial in Canada; Ontario is cited as one representative province, not 'Canada' nationally)"
+          :owner-authority "Ontario Ministry of Education / Minister of Education (provincial authority; Canada has no federal Ministry of Education or national school-operator licensor)"
+          :legal-basis "Education Act, R.S.O. 1990, c. E.2 (Province of Ontario) -- s. 16 (notice of intention to operate a private school) and s. 8 (1), par. 2 (Minister's authority to prescribe courses of study for the primary/junior/intermediate/senior divisions)"
+          :national-spec "Private-school registration via annual notice of intention to operate (due 1 September, s. 16 (1)-(2), offence to operate without filing per s. 16 (4)), Ministry inspection power (s. 16 (6)), and Minister-prescribed curriculum for the primary division (s. 8 (1), par. 2)"
+          :provenance "https://www.ontario.ca/laws/statute/90e02"
+          :required-evidence ["Notice of intention to operate a private school, filed annually with the Ministry on or before 1 September (school-registration record) -- Education Act s. 16 (1)-(2)"
+                              "Statistical return of enrolment, staff and courses of study, as required by the Minister -- Education Act s. 16 (5)"
+                              "Courses of study for the primary/junior/intermediate/senior divisions as prescribed or approved by the Minister (curriculum-approval basis) -- Education Act s. 8 (1), par. 2"]}})
 
 (defn spec-basis
   "The jurisdiction's requirement map, or nil -- nil means NO spec-basis,
