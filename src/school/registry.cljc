@@ -53,6 +53,17 @@
   (and (number? current-class-size) (number? maximum-class-size)
        (> current-class-size maximum-class-size)))
 
+(defn class-size-exceeds-maximum-checkable?
+  "Are both sides of `class-size-exceeds-maximum?` actually recorded?
+
+  That predicate answers only `over` / `not over`, and its
+  `(and (number? ...) (number? ...) ...)` guard made every un-recorded
+  case fall through as `not over` -- an entity missing either figure
+  passed the limit check silently. Callers must ask this first:
+  un-checkable is not within limits."
+  [{:keys [current-class-size maximum-class-size]}]
+  (boolean (and (number? current-class-size) (number? maximum-class-size))))
+
 (defn register-promotion-finalization
   "Validate + construct the PROMOTION-FINALIZATION registration DRAFT
   -- the school's own legal act of finalizing a real student's
