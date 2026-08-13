@@ -2475,7 +2475,7 @@ img,svg { max-width: 100%; height: auto; }
 </header>
 <p class="subtitle">Read-only sample. Every value below was produced by a real run of <code>school.operation</code> &rarr; <code>school.governor</code> &rarr; <code>school.store</code> at build time (<code>clojure -M:dev:render-html</code>), not written by hand. Promotion finalization and safeguarding-record finalization are always a human educator&#39;s call, at every phase.</p>
 <div class="banner">
-  <p><strong>This build:</strong> <span class="num">16</span> audit facts · <span class="num">23</span> graph runs · <span class="num">7</span> HARD governor holds across <span class="num">7</span> distinct rules (<code>:already-promoted</code>, <code>:already-recorded</code>, <code>:approver-rejected</code>, <code>:background-check-not-cleared</code>, <code>:class-size-exceeds-maximum</code>, <code>:evidence-incomplete</code>, <code>:no-spec-basis</code>) · <span class="num">1</span> promotion draft(s) · <span class="num">1</span> safeguarding draft(s).</p>
+  <p><strong>This build:</strong> <span class="num">16</span> audit facts · <span class="num">23</span> graph runs · <span class="num">6</span> HARD governor holds across <span class="num">6</span> distinct rules (<code>:already-promoted</code>, <code>:already-recorded</code>, <code>:background-check-not-cleared</code>, <code>:class-size-exceeds-maximum</code>, <code>:evidence-incomplete</code>, <code>:no-spec-basis</code>) · <span class="num">1</span> human rejection(s) · <span class="num">2</span> rollout-phase hold(s) · <span class="num">1</span> promotion draft(s) · <span class="num">1</span> safeguarding draft(s).</p>
   <p class="muted">A HARD hold never reaches a human. The build fails if this run produces none &mdash; see <code>school.render-html/-main</code>.</p>
 </div>
 <main>
@@ -2500,11 +2500,20 @@ img,svg { max-width: 100%; height: auto; }
       <tbody>
         <tr><td><code>:already-promoted</code></td><td><span class="critical">HARD · no human override</span></td><td><span class="num">1</span></td><td><code>:promotion/finalize</code></td><td><code>student-1</code></td><td>student-1 は既に進級確定済み</td></tr>
         <tr><td><code>:already-recorded</code></td><td><span class="critical">HARD · no human override</span></td><td><span class="num">1</span></td><td><code>:safeguarding/finalize</code></td><td><code>student-1</code></td><td>student-1 は既に安全対策記録確定済み</td></tr>
-        <tr><td><code>:approver-rejected</code></td><td><span class="critical">HARD · no human override</span></td><td><span class="num">1</span></td><td><code>:safeguarding/finalize</code></td><td><code>student-4</code></td><td></td></tr>
         <tr><td><code>:background-check-not-cleared</code></td><td><span class="critical">HARD · no human override</span></td><td><span class="num">1</span></td><td><code>:background-check/screen</code></td><td><code>student-4</code></td><td>職員の身元確認が未完了の状態での進級確定/安全対策記録確定提案は進められない</td></tr>
         <tr><td><code>:class-size-exceeds-maximum</code></td><td><span class="critical">HARD · no human override</span></td><td><span class="num">1</span></td><td><code>:promotion/finalize</code></td><td><code>student-3</code></td><td>student-3 の進級先クラス人数(32)が定員(30)を超過</td></tr>
         <tr><td><code>:evidence-incomplete</code></td><td><span class="critical">HARD · no human override</span></td><td><span class="num">1</span></td><td><code>:promotion/finalize</code></td><td><code>student-2</code></td><td>法域の必要書類(学齢簿記載事項証明書/教育課程編成届/安全対策方針/職員身元確認証明書等)が充足していない状態での提案</td></tr>
         <tr><td><code>:no-spec-basis</code></td><td><span class="critical">HARD · no human override</span></td><td><span class="num">1</span></td><td><code>:jurisdiction/assess</code></td><td><code>student-2</code></td><td>公式spec-basisの引用が無い提案は法域要件として扱えない</td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Human rejections (the approver said no)</h2>
+    <p class="muted">Distinct from the governor&#39;s HARD holds above: here the governor found nothing to refuse, the <code>interrupt-before</code> gate handed the decision to a licensed educator, and the educator declined. The operation lands on the same <code>:hold</code> node and writes the same append-only ledger, but the <code>:approver-rejected</code> rule is synthesised by <code>school.operation</code>&#39;s approval branch, not by <code>school.governor/check</code>.</p>
+    <table>
+      <thead><tr><th>Op</th><th>Subject</th><th>Actor on the request</th><th>Rule</th><th>Advisor confidence</th><th>Rejecting approver</th></tr></thead>
+      <tbody>
+        <tr><td><code>:safeguarding/finalize</code></td><td><code>student-4</code></td><td>op-1</td><td><code>:approver-rejected</code></td><td><span class="num">0.3</span></td><td><span class="critical">not recorded</span> <span class="muted">the :approval-rejected fact carries no :by key; the resume call supplied op-1</span></td></tr>
       </tbody>
     </table>
   </section>

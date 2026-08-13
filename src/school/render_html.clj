@@ -231,10 +231,22 @@
   (filter #(#{:governor-hold :approval-rejected} (:t %)) (store/ledger db)))
 
 (defn- hard-holds
-  "Holds carrying at least one governor violation. A phase-gate hold
-  carries none -- it is a rollout decision, not a compliance verdict."
+  "Governor holds carrying at least one violation.
+
+  Deliberately narrower than `holds`: a phase-gate hold carries no
+  violation (it is a rollout decision, not a compliance verdict), and
+  an `:approval-rejected` hold DOES carry a synthetic
+  `:approver-rejected` violation but is a human's decision, not the
+  governor's -- calling it 'HARD, no human override' would invert what
+  actually happened."
   [db]
-  (filter #(seq (:violations %)) (holds db)))
+  (filter #(and (= :governor-hold (:t %)) (seq (:violations %))) (holds db)))
+
+(defn- rejections [db]
+  (filter #(= :approval-rejected (:t %)) (store/ledger db)))
+
+(defn- phase-holds [db]
+  (filter #(and (= :governor-hold (:t %)) (empty? (:violations %))) (holds db)))
 
 (defn- key-name [k] (if (keyword? k) (name k) (str k)))
 
@@ -315,8 +327,40 @@
              (table ["Rule" "Severity" "Times fired" "Ops" "Subjects" "Detail (governor's own words)"]
                     rows))))
 
+(defn- rejection-section [db log]
+  (let [rows (for [f (rejections db)
+                   :let [resume (first (filter #(and (= :resume (:stage %))
+                                                     (= :rejected (:decision %))
+                                                     (= (:subject f)
+                                                        (get-in % [:result :state :request :subject])))
+                                                log))]]
+               (row [(code (:op f))
+                     (code (:subject f))
+                     (esc (:actor f))
+                     (kw-list (map :rule (:violations f)))
+                     (num-cell (:confidence f))
+                     (if (some (fn [[k _]] (str/includes? (str/lower-case (key-name k)) "by"))
+                               (seq f))
+                       (ok "recorded")
+                       (str (crit "not recorded")
+                            " "
+                            (muted (str "the :approval-rejected fact carries no :by key; "
+                                        (if resume
+                                          (str "the resume call supplied " (:by resume))
+                                          "the resuming operator is unknown to the store")))))]))]
+    (section "Human rejections (the approver said no)"
+             (str "Distinct from the governor&#39;s HARD holds above: here the governor found nothing "
+                  "to refuse, the <code>interrupt-before</code> gate handed the decision to a licensed "
+                  "educator, and the educator declined. The operation lands on the same "
+                  "<code>:hold</code> node and writes the same append-only ledger, but the "
+                  "<code>:approver-rejected</code> rule is synthesised by "
+                  "<code>school.operation</code>&#39;s approval branch, not by "
+                  "<code>school.governor/check</code>.")
+             (table ["Op" "Subject" "Actor on the request" "Rule" "Advisor confidence"
+                     "Rejecting approver"] rows))))
+
 (defn- phase-hold-section [db]
-  (let [ph (remove #(seq (:violations %)) (holds db))
+  (let [ph (phase-holds db)
         rows (for [f ph]
                (row [(code (:phase-reason f :n/a))
                      (num-cell (:phase f))
@@ -646,6 +690,8 @@
      (num-cell (count hh)) " HARD governor holds across "
      (num-cell (count rules)) " distinct rules ("
      (str/join ", " (map code rules)) ") · "
+     (num-cell (count (rejections db))) " human rejection(s) · "
+     (num-cell (count (phase-holds db))) " rollout-phase hold(s) · "
      (num-cell (count (store/promotion-history db))) " promotion draft(s) · "
      (num-cell (count (store/safeguarding-history db))) " safeguarding draft(s).</p>\n"
      "  <p class=\"muted\">A HARD hold never reaches a human. The build fails if this run produces "
@@ -654,6 +700,7 @@
      "<main>\n"
      (students-section db log)
      (governor-section db)
+     (rejection-section db log)
      (phase-hold-section db)
      (phases-section)
      (ops-section log)
@@ -679,16 +726,16 @@
 (defn -main [& args]
   (let [out (or (first args) "docs/samples/operator-console.html")
         {:keys [db log] :as run} (run-demo!)
-        all-holds (holds db)
+        governor-holds (filter #(= :governor-hold (:t %)) (store/ledger db))
         hh (hard-holds db)]
     ;; Build-time invariant, not a convention: a console that cannot
     ;; show the governor refusing is not evidence that it exists.
-    (when (zero? (count all-holds))
+    (when (zero? (count governor-holds))
       (throw (ex-info "render-html: scenario produced ZERO :governor-hold records"
                       {:ledger-size (count (store/ledger db)) :runs (count log)})))
     (when (zero? (count hh))
       (throw (ex-info "render-html: scenario produced ZERO HARD (violation-bearing) governor holds"
-                      {:holds (count all-holds)})))
+                      {:governor-holds (count governor-holds)})))
     (let [html (render run)]
       (spit out html)
       (println "wrote" out
