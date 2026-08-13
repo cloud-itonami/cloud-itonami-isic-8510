@@ -290,12 +290,12 @@
                 (let [f (last-for id)]
                   (cond
                     (nil? f) (muted "no activity")
-                    (= :committed (:t f)) (ok (str "committed · " (name (:op f))))
-                    (= :approval-rejected (:t f)) (warn (str "rejected by approver · " (name (:op f))))
+                    (= :committed (:t f)) (ok (str "committed · " (:op f)))
+                    (= :approval-rejected (:t f)) (warn (str "rejected by approver · " (:op f)))
                     (= :governor-hold (:t f))
                     (if-let [r (-> f :violations first :rule)]
-                      (crit (str "HARD hold · " (name r)))
-                      (warn (str "phase hold · " (name (:phase-reason f :phase-gate)))))
+                      (crit (str "HARD hold · " r))
+                      (warn (str "phase hold · " (:phase-reason f :phase-gate))))
                     :else (muted "in progress")))
                 (muted (str/join " " (threads-for id)))]))]
     (section "Student roster (SSoT after this run)"
@@ -610,21 +610,33 @@
   (let [rows (for [{:keys [thread stage request decision by result]} log
                    :let [st (:state result)
                          req (or request (:request st))
-                         v (:verdict st)]]
+                         v (:verdict st)
+                         ;; The rejection branch builds its own violation
+                         ;; set for the hold fact without writing it back
+                         ;; to the :verdict channel, so the channel alone
+                         ;; cannot tell a rejection from a phase hold.
+                         reject-fact (last (filter #(= :approval-rejected (:t %)) (:audit st)))
+                         hold-violations (if (seq (:violations v))
+                                           (:violations v)
+                                           (:violations reject-fact))]]
                (row [(code thread)
                      (if (= :resume stage)
-                       (str (code (name (:op req))) " " (muted (str "resume · " (name decision) " by " by)))
-                       (code (name (:op req))))
+                       (str (code (:op req)) " "
+                            (muted (str "resume · " (name decision) " by " by)))
+                       (code (:op req)))
                      (code (:subject req))
                      (num-cell (get-in st [:context :phase]))
                      (if-let [c (get-in st [:proposal :confidence])] (num-cell c) (muted "—"))
                      (case (:disposition st)
                        :commit (ok "commit")
                        :escalate (warn "escalate → human")
-                       :hold (if (seq (:violations v)) (crit "HARD hold") (warn "phase hold"))
+                       :hold (cond
+                               (seq (:violations v)) (crit "HARD hold")
+                               (and (= :resume stage) reject-fact) (warn "rejected by approver")
+                               :else (warn "phase hold"))
                        (muted (str (:disposition st))))
-                     (if (seq (:violations v))
-                       (kw-list (map :rule (:violations v)))
+                     (if (seq hold-violations)
+                       (kw-list (map :rule hold-violations))
                        (muted "—"))
                      (case (:status result)
                        :interrupted (warn "interrupted (awaiting human)")
@@ -639,8 +651,8 @@
 
 (defn- ledger-section [db]
   (let [rows (for [f (store/ledger db)]
-               (row [(code (name (:t f)))
-                     (code (name (:op f)))
+               (row [(code (:t f))
+                     (code (:op f))
                      (code (:subject f))
                      (esc (:actor f))
                      (case (:disposition f)
