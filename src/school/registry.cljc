@@ -26,7 +26,7 @@
   safeguarding record itself (that is `school.operation`'s
   `:promotion/finalize`/`:safeguarding/finalize`, always human-gated
   -- see README `Actuation`)."
-  (:require [clojure.string :as str]))
+  (:require [kotoba.lang.text :as str]))
 
 (defn- unsigned-certificate
   "Every certificate this actor produces is UNSIGNED -- signature is the
@@ -80,7 +80,7 @@
     (throw (ex-info "promotion-finalization: jurisdiction required" {})))
   (when (< sequence 0)
     (throw (ex-info "promotion-finalization: sequence must be >= 0" {})))
-  (let [promotion-number (str (str/upper-case jurisdiction) "-PRM-" (zero-pad sequence 6))
+  (let [promotion-number (str (str/upper jurisdiction) "-PRM-" (zero-pad sequence 6))
         record {"record_id" promotion-number
                 "kind" "promotion-finalization-draft"
                 "student_id" student-id
@@ -106,7 +106,7 @@
     (throw (ex-info "safeguarding-record-finalization: jurisdiction required" {})))
   (when (< sequence 0)
     (throw (ex-info "safeguarding-record-finalization: sequence must be >= 0" {})))
-  (let [record-number (str (str/upper-case jurisdiction) "-SFG-" (zero-pad sequence 6))
+  (let [record-number (str (str/upper jurisdiction) "-SFG-" (zero-pad sequence 6))
         record {"record_id" record-number
                 "kind" "safeguarding-record-finalization-draft"
                 "student_id" student-id

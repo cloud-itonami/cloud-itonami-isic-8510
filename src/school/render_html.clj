@@ -32,7 +32,7 @@
   Usage: `clojure -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
   (:require [jp-go-dds.skin]
-            [clojure.string :as str]
+            [kotoba.lang.text :as str]
             [school.facts :as facts]
             [school.governor :as governor]
             [school.phase :as phase]
@@ -257,7 +257,7 @@
   become a lie the moment the store changes."
   [record]
   (some (fn [[k v]]
-          (when (str/includes? (str/lower-case (key-name k)) "approv") v))
+          (when (str/includes? (str/lower (key-name k)) "approv") v))
         (seq record)))
 
 ;; ----------------------------- sections -----------------------------
@@ -339,7 +339,7 @@
                      (esc (:actor f))
                      (kw-list (map :rule (:violations f)))
                      (num-cell (:confidence f))
-                     (if (some (fn [[k _]] (str/includes? (str/lower-case (key-name k)) "by"))
+                     (if (some (fn [[k _]] (str/includes? (str/lower (key-name k)) "by"))
                                (seq f))
                        (ok "recorded")
                        (str (crit "not recorded")
