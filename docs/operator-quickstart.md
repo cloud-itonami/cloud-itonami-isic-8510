@@ -61,16 +61,16 @@ The demo output shows real actor behavior and governor decisions — use it to v
 
 | Module | Location | Role |
 |--------|----------|------|
-| **Curriculum Safeguarding Governor** | `src/school/governor.cljc` | Independent verification of promotion and safeguarding-record decisions; enforces hard gates |
-| **SchoolOps-LLM Advisor** | `src/school/schoolopsllm.cljc` | Drafts proposals; mock or real LLM mode |
-| **Phase Table** | `src/school/phase.cljc` | Governs which operations can be auto-executed (only student intake); forces human sign-off for high-stakes ops |
-| **OperationActor** | `src/school/operation.cljc` | langgraph-clj StateGraph orchestrating the full lifecycle |
-| **Store** | `src/school/store.cljc` | In-memory or Datomic persistence with append-only audit ledger |
-| **Facts & Jurisdiction Catalog** | `src/school/facts.cljc` | Per-jurisdiction school-licensing requirements with spec-basis citations |
+| **Curriculum Safeguarding Governor** | `src/school/governor.kotoba` | Independent verification of promotion and safeguarding-record decisions; enforces hard gates |
+| **SchoolOps-LLM Advisor** | `src/school/schoolopsllm.kotoba` | Drafts proposals; mock or real LLM mode |
+| **Phase Table** | `src/school/phase.kotoba` | Governs which operations can be auto-executed (only student intake); forces human sign-off for high-stakes ops |
+| **OperationActor** | `src/school/operation.kotoba` | langgraph-clj StateGraph orchestrating the full lifecycle |
+| **Store** | `src/school/store.kotoba` | In-memory or Datomic persistence with append-only audit ledger |
+| **Facts & Jurisdiction Catalog** | `src/school/facts.kotoba` | Per-jurisdiction school-licensing requirements with spec-basis citations |
 
 ## Before Going Live
 
-1. **Review the governor contract** — see `test/school/governor_contract_test.clj`
+1. **Review the governor contract** — see `test/school/governor_contract_test.kotoba`
 2. **Configure trust controls** — set hold/escalation policy in your `Governor` instance
 3. **Test with real jurisdiction facts** — add your jurisdiction to `school.facts/catalog` with an official spec-basis citation
 4. **Run the full test suite** — `clojure -M:dev:test`

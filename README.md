@@ -86,7 +86,7 @@ enforce this (`school.governor`'s `:actuation/finalize-promotion`/
 `:actuation/finalize-safeguarding-record` high-stakes gate and
 `school.phase`'s phase table, which never puts `:promotion/finalize`/
 `:safeguarding/finalize` in any phase's `:auto` set) -- see
-`school.phase`'s docstring and `test/school/phase_test.clj`'s
+`school.phase`'s docstring and `test/school/phase_test.kotoba`'s
 `promotion-finalize-never-auto-at-any-phase`/`safeguarding-finalize-
 never-auto-at-any-phase`. The actor may draft, check and recommend; a
 human licensed educator is always the one who actually finalizes a
@@ -172,14 +172,14 @@ lib to reference at all.
 
 | File | Role |
 |---|---|
-| `src/school/store.cljc` | **Store** protocol -- `MemStore` ‖ `DatomicStore` (`langchain.db`) + append-only audit ledger + separate promotion-finalization/safeguarding-record-finalization history. No dynamically-filed sub-record -- both actuation ops act directly on a pre-seeded student, and the double-promotion/double-record guards check dedicated `:promoted?`/`:safeguarding-recorded?` booleans rather than a `:status` value |
-| `src/school/registry.cljc` | Promotion-finalization + safeguarding-record-finalization draft records, plus `class-size-exceeds-maximum?` -- the SECOND non-temporal instance of this fleet's MAXIMUM-ceiling family (`facility.registry/occupancy-exceeds-capacity?` established the first) |
-| `src/school/facts.cljc` | Per-jurisdiction school-licensing catalog with an official spec-basis citation per entry, honest coverage reporting |
-| `src/school/schoolopsllm.cljc` | **SchoolOps-LLM Advisor** -- `mock-advisor` ‖ `llm-advisor`; intake/assessment/background-check-screening/promotion-finalization/safeguarding-record-finalization proposals |
-| `src/school/governor.cljc` | **Curriculum Safeguarding Governor** -- 4 HARD checks (spec-basis · evidence-incomplete · class-size-exceeds-maximum, pure ground-truth MAXIMUM-ceiling recompute · background-check-not-cleared, unconditional evaluation, the EIGHTEENTH grounding of this discipline and FIRST specifically for the staff-background-check-clearance concept) + already-promoted/already-recorded guards + 1 soft (confidence/actuation gate) |
-| `src/school/phase.cljc` | **Phase 0→3** -- read-only → assisted intake → assisted assess → supervised (both promotion and safeguarding-record finalization always human; student intake is the ONLY auto-eligible op, no direct capital risk) |
-| `src/school/operation.cljc` | **OperationActor** -- langgraph-clj StateGraph |
-| `src/school/sim.cljc` | demo driver |
+| `src/school/store.kotoba` | **Store** protocol -- `MemStore` ‖ `DatomicStore` (`langchain.db`) + append-only audit ledger + separate promotion-finalization/safeguarding-record-finalization history. No dynamically-filed sub-record -- both actuation ops act directly on a pre-seeded student, and the double-promotion/double-record guards check dedicated `:promoted?`/`:safeguarding-recorded?` booleans rather than a `:status` value |
+| `src/school/registry.kotoba` | Promotion-finalization + safeguarding-record-finalization draft records, plus `class-size-exceeds-maximum?` -- the SECOND non-temporal instance of this fleet's MAXIMUM-ceiling family (`facility.registry/occupancy-exceeds-capacity?` established the first) |
+| `src/school/facts.kotoba` | Per-jurisdiction school-licensing catalog with an official spec-basis citation per entry, honest coverage reporting |
+| `src/school/schoolopsllm.kotoba` | **SchoolOps-LLM Advisor** -- `mock-advisor` ‖ `llm-advisor`; intake/assessment/background-check-screening/promotion-finalization/safeguarding-record-finalization proposals |
+| `src/school/governor.kotoba` | **Curriculum Safeguarding Governor** -- 4 HARD checks (spec-basis · evidence-incomplete · class-size-exceeds-maximum, pure ground-truth MAXIMUM-ceiling recompute · background-check-not-cleared, unconditional evaluation, the EIGHTEENTH grounding of this discipline and FIRST specifically for the staff-background-check-clearance concept) + already-promoted/already-recorded guards + 1 soft (confidence/actuation gate) |
+| `src/school/phase.kotoba` | **Phase 0→3** -- read-only → assisted intake → assisted assess → supervised (both promotion and safeguarding-record finalization always human; student intake is the ONLY auto-eligible op, no direct capital risk) |
+| `src/school/operation.kotoba` | **OperationActor** -- langgraph-clj StateGraph |
+| `src/school/sim.kotoba` | demo driver |
 | `test/school/*_test.clj` | governor contract · phase invariants · store parity · registry conformance · facts coverage |
 
 ## Business-process coverage (honest)
