@@ -159,7 +159,7 @@ stack only, per the blueprint's own explicit statement.
   evaluation discipline has been applied to a one-time clearance gate
   rather than a renewable-license-currency concept.
 - (+) The actuation invariant (governor + phase, two layers) is
-  regression-tested by `test/school/phase_test.clj`'s `promotion-
+  regression-tested by `test/school/phase_test.kotoba`'s `promotion-
   finalize-never-auto-at-any-phase`/`safeguarding-finalize-never-auto-
   at-any-phase`.
 - (+) `MemStore` ‖ `DatomicStore` parity is proven by `test/school/
