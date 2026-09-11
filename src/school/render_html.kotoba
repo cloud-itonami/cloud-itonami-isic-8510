@@ -29,7 +29,7 @@
   console that cannot show the governor refusing is not evidence that
   the governor exists.
 
-  Usage: `clojure -M:dev:render-html [out-file]`
+  Usage: `kbb -M:dev:render-html [out-file]`
   (default `docs/samples/operator-console.html`)."
   (:require [jp-go-dds.skin]
             [kotoba.lang.text :as str]
@@ -692,7 +692,7 @@
      "</header>\n"
      "<p class=\"subtitle\">Read-only sample. Every value below was produced by a real run of "
      "<code>school.operation</code> &rarr; <code>school.governor</code> &rarr; "
-     "<code>school.store</code> at build time (<code>clojure -M:dev:render-html</code>), not written "
+     "<code>school.store</code> at build time (<code>kbb -M:dev:render-html</code>), not written "
      "by hand. Promotion finalization and safeguarding-record finalization are always a human "
      "educator&#39;s call, at every phase.</p>\n"
      "<div class=\"banner\">\n"
@@ -729,7 +729,7 @@
      "  <p>Generated at build time by <code>school.render-html</code> from "
      "<code>school.store/demo-data</code>. Deterministic: no timestamps, no randomness &mdash; two "
      "consecutive runs are byte-identical. Regenerate with "
-     "<code>clojure -M:dev:render-html</code>.</p>\n"
+     "<code>kbb -M:dev:render-html</code>.</p>\n"
      "  <p>cloud-itonami &middot; ISIC 8510 pre-primary and primary education &middot; "
      "governed actor demo.</p>\n"
      "</footer>\n"
