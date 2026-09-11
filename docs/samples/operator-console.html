@@ -2473,7 +2473,7 @@ img,svg { max-width: 100%; height: auto; }
   <h1>Pre-primary and primary education (ISIC 8510) &mdash; Operator Console</h1>
   <span class="badge">ISIC 8510</span>
 </header>
-<p class="subtitle">Read-only sample. Every value below was produced by a real run of <code>school.operation</code> &rarr; <code>school.governor</code> &rarr; <code>school.store</code> at build time (<code>clojure -M:dev:render-html</code>), not written by hand. Promotion finalization and safeguarding-record finalization are always a human educator&#39;s call, at every phase.</p>
+<p class="subtitle">Read-only sample. Every value below was produced by a real run of <code>school.operation</code> &rarr; <code>school.governor</code> &rarr; <code>school.store</code> at build time (<code>kbb -M:dev:render-html</code>), not written by hand. Promotion finalization and safeguarding-record finalization are always a human educator&#39;s call, at every phase.</p>
 <div class="banner">
   <p><strong>This build:</strong> <span class="num">16</span> audit facts · <span class="num">23</span> graph runs · <span class="num">6</span> HARD governor holds across <span class="num">6</span> distinct rules (<code>:already-promoted</code>, <code>:already-recorded</code>, <code>:background-check-not-cleared</code>, <code>:class-size-exceeds-maximum</code>, <code>:evidence-incomplete</code>, <code>:no-spec-basis</code>) · <span class="num">1</span> human rejection(s) · <span class="num">2</span> rollout-phase hold(s) · <span class="num">1</span> promotion draft(s) · <span class="num">1</span> safeguarding draft(s).</p>
   <p class="muted">A HARD hold never reaches a human. The build fails if this run produces none &mdash; see <code>school.render-html/-main</code>.</p>
@@ -2691,7 +2691,7 @@ img,svg { max-width: 100%; height: auto; }
   </section>
 </main>
 <footer>
-  <p>Generated at build time by <code>school.render-html</code> from <code>school.store/demo-data</code>. Deterministic: no timestamps, no randomness &mdash; two consecutive runs are byte-identical. Regenerate with <code>clojure -M:dev:render-html</code>.</p>
+  <p>Generated at build time by <code>school.render-html</code> from <code>school.store/demo-data</code>. Deterministic: no timestamps, no randomness &mdash; two consecutive runs are byte-identical. Regenerate with <code>kbb -M:dev:render-html</code>.</p>
   <p>cloud-itonami &middot; ISIC 8510 pre-primary and primary education &middot; governed actor demo.</p>
 </footer>
 </body></html>

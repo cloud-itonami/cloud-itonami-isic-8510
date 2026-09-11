@@ -17,7 +17,7 @@ For a **standalone fork** outside the monorepo, override the `:local/root` entri
 The actor's governor contract, phase invariants, store parity, registry conformance, and facts coverage are all tested:
 
 ```bash
-clojure -M:dev:test
+kbb -M:dev:test
 ```
 
 Test files cover:
@@ -34,7 +34,7 @@ All tests must pass before any deployment.
 Walk one clean lifecycle (promotion finalization + safeguarding-record finalization) plus five HARD-hold cases through the actor:
 
 ```bash
-clojure -M:dev:run
+kbb -M:dev:run
 ```
 
 This drives `school.sim`, the demo driver. The output shows:
@@ -49,7 +49,7 @@ To publish a read-only demo page:
 
 ```bash
 # Generate the demo output to stdout
-clojure -M:dev:run > demo-output.txt
+kbb -M:dev:run > demo-output.txt
 
 # Create a simple HTML wrapper (optional)
 # Then host on GitHub Pages, Netlify, or your platform
@@ -73,7 +73,7 @@ The demo output shows real actor behavior and governor decisions — use it to v
 1. **Review the governor contract** — see `test/school/governor_contract_test.kotoba`
 2. **Configure trust controls** — set hold/escalation policy in your `Governor` instance
 3. **Test with real jurisdiction facts** — add your jurisdiction to `school.facts/catalog` with an official spec-basis citation
-4. **Run the full test suite** — `clojure -M:dev:test`
+4. **Run the full test suite** — `kbb -M:dev:test`
 5. **Set up audit export** — ensure `school.store`'s audit ledger path is backed up and monitored
 6. **Establish a manual override process** — for when the system itself needs override (human, not LLM)
 
