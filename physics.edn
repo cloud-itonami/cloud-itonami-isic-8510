@@ -1,0 +1,35 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README "Robotics premise": a classroom-safety monitoring robot supports
+;; physical supervision during activities in primary education (ISIC 8510).
+;; Its physical work is moving among children: patrolling corridors and
+;; classrooms, where how far it travels before stopping decides whether it
+;; can avoid a child who steps into its path, and running the first-aid kit
+;; to the playground when a teacher calls.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-8510"
+ :cases
+ [{:id :corridor-patrol-stop
+   :kind :transport
+   :procedure "monitoring robot patrols a school corridor and brakes to a stop when a child steps into its path"
+   :params {:mass-kg 35.0 :payload-kg 2.0 :distance-m 30.0 :a-max-mps2 0.5
+            :brake-decel-mps2 1.0 :drive-force-n 150.0 :crr 0.015
+            :cog-height-m 0.50 :support-half-length-m 0.22 :max-time-s 2000.0}
+   :sweep {:param :v-max-mps :values [0.4 0.6 0.8 1.0 1.3]}
+   :quantity :stopping-distance-m
+   :limit {:max 0.30 :basis "estimate: stop within about one child's stride of first detection, so the robot does not reach a child who steps out"}
+   :boundary {:lo 0.2 :hi 2.0}}
+  {:id :first-aid-kit-run
+   :kind :transport
+   :procedure "robot carries the first-aid kit from the school office to the playground when a teacher calls"
+   :params {:mass-kg 35.0 :payload-kg 4.0 :v-max-mps 1.5 :a-max-mps2 0.6
+            :brake-decel-mps2 1.0 :drive-force-n 150.0 :crr 0.02
+            :cog-height-m 0.50 :support-half-length-m 0.22 :max-time-s 3000.0}
+   :sweep {:param :distance-m :values [50.0 100.0 200.0 300.0 400.0]}
+   :quantity :cycle-time-s
+   :limit {:max 180.0 :basis "estimate: first-aid kit at the child within 3 minutes of the call"}
+   :boundary {:lo 10.0 :hi 1000.0}}]}
